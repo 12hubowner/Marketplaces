@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Access denied</title>
+<script src="https://cdn.tailwindcss.com"></script></head>
+<body class="bg-red-50 min-h-screen flex items-center justify-center p-4">
+  <div class="max-w-md bg-white rounded-lg shadow p-8 text-center space-y-4">
+    <div class="text-6xl">🚫</div>
+    <h1 class="text-2xl font-bold text-red-700">Access denied</h1>
+    <p class="text-gray-700">You have been banned from this marketplace. This ban is permanent.</p>
+    {% if reason %}<p class="text-sm text-gray-600 italic">Reason: {{ reason }}</p>{% endif %}
+    <hr>
+    <p class="text-sm text-gray-600">If you believe this is a mistake, contact the site administrator. Only an administrator can lift the ban.</p>
+  </div>
+</body>
+</html>
