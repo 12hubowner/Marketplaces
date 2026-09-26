@@ -1,0 +1,27 @@
+<a href="{% url 'listing_detail' listing.slug %}"
+   class="bg-white rounded-lg overflow-hidden hover:shadow-md transition block relative group">
+  <div class="relative">
+    {% with listing.images.first as img %}
+      {% if img %}<img src="{{ img.image.url }}" class="w-full aspect-square object-cover">
+      {% else %}<div class="w-full aspect-square bg-gray-100 flex items-center justify-center text-gray-400 text-xs">No image</div>{% endif %}
+    {% endwith %}
+    {% if show_badges %}
+      {% if listing.condition == "new" %}
+        <span class="absolute top-2 left-2 bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">NEW</span>
+      {% elif listing.condition == "like_new" %}
+        <span class="absolute top-2 left-2 bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">LIKE NEW</span>
+      {% endif %}
+      {% if listing.likes.count > 3 %}
+        <span class="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">🔥 {{ listing.likes.count }}</span>
+      {% endif %}
+    {% endif %}
+  </div>
+  <div class="p-3 space-y-1">
+    <p class="font-semibold text-sm text-green-600">${{ listing.price }}</p>
+    <p class="text-sm truncate">{{ listing.title }}</p>
+    <p class="text-[11px] text-gray-500 truncate">@{{ listing.seller.username }} · {{ listing.get_category_display }}</p>
+    {% if show_cart and listing.status == "active" %}
+      <div class="pt-2"><span class="block w-full text-center btn-green rounded-md py-2 text-xs font-semibold">Add to Cart</span></div>
+    {% endif %}
+  </div>
+</a>
