@@ -1,0 +1,28 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="max-w-sm mx-auto bg-white rounded-lg p-6 shadow-sm space-y-4">
+  <h1 class="text-2xl font-bold">Create account</h1>
+  {% if form.errors %}
+    <div class="bg-red-100 text-red-800 px-3 py-2 rounded text-sm">
+      <ul class="list-disc pl-5">
+        {% for field, errors in form.errors.items %}
+          {% for e in errors %}<li>{{ field }}: {{ e }}</li>{% endfor %}
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+  <form method="post" action="{% url 'register' %}" class="space-y-3">
+    {% csrf_token %}
+    <div><label class="block text-sm font-medium mb-1">Username</label>
+      <input name="username" required value="{{ form.username.value|default:'' }}" class="w-full border rounded px-3 py-2"></div>
+    <div><label class="block text-sm font-medium mb-1">Email (optional)</label>
+      <input name="email" type="email" value="{{ form.email.value|default:'' }}" class="w-full border rounded px-3 py-2"></div>
+    <div><label class="block text-sm font-medium mb-1">Password</label>
+      <input name="password1" type="password" required class="w-full border rounded px-3 py-2"></div>
+    <div><label class="block text-sm font-medium mb-1">Confirm password</label>
+      <input name="password2" type="password" required class="w-full border rounded px-3 py-2"></div>
+    <button class="w-full btn-green rounded py-2 font-semibold">Sign up</button>
+  </form>
+  <p class="text-sm text-center text-gray-600">Already have an account? <a href="{% url 'login' %}" class="underline">Sign in</a></p>
+</div>
+{% endblock %}
