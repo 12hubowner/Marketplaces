@@ -1,0 +1,41 @@
+{% extends "core/dashboard/base.html" %}
+{% block title %}Users{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Users</h1>
+<form class="mb-4 flex gap-2">
+  <input name="q" value="{{ q }}" placeholder="Search username or email..." class="flex-1 border rounded px-3 py-2 text-sm bg-white">
+  <button class="bg-black text-white px-4 py-2 rounded text-sm">Search</button>
+</form>
+<div class="bg-white rounded-lg shadow-sm overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 text-left text-xs text-gray-500">
+      <tr><th class="px-4 py-2">User</th><th class="px-4 py-2">Email</th><th class="px-4 py-2">Listings</th><th class="px-4 py-2">Joined</th><th class="px-4 py-2">Status</th><th class="px-4 py-2">Actions</th></tr>
+    </thead>
+    <tbody class="divide-y">
+      {% for u in users %}
+        <tr>
+          <td class="px-4 py-3 font-medium">
+            <a href="{% url 'dash_user_detail' u.id %}" class="hover:underline">{{ u.username }}</a>
+            {% if u.is_staff %}<span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded ml-1">staff</span>{% endif %}
+          </td>
+          <td class="px-4 py-3 text-gray-600">{{ u.email|default:"—" }}</td>
+          <td class="px-4 py-3">{{ u.listing_count }}</td>
+          <td class="px-4 py-3 text-gray-500 text-xs">{{ u.date_joined|date:"M j, Y" }}</td>
+          <td class="px-4 py-3">
+            {% if u.active_ban %}<span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">BANNED</span>
+            {% else %}<span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">Active</span>{% endif %}
+          </td>
+          <td class="px-4 py-3 space-x-2 whitespace-nowrap">
+            <a href="{% url 'dash_user_detail' u.id %}" class="text-blue-600 hover:underline text-xs">View</a>
+            {% if u.active_ban %}
+              <a href="{% url 'dash_ban_lift' u.active_ban.id %}" class="text-green-600 hover:underline text-xs">Unban</a>
+            {% elif not u.is_staff %}
+              <a href="{% url 'dash_ban_quick' u.id %}" onclick="return confirm('Ban @{{ u.username }}?')" class="text-red-600 hover:underline text-xs">Ban</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}<tr><td colspan="6" class="text-center text-gray-400 py-8">No users.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
