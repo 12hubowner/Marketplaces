@@ -1,0 +1,49 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+  <div class="flex items-center justify-between mb-4">
+    <a href="{% url 'inbox' %}" class="text-sm underline">← Inbox</a>
+    <p class="font-semibold">{% if user == conversation.buyer %}@{{ conversation.seller.username }}{% else %}{{ conversation.buyer.username }}{% endif %}</p>
+  </div>
+  {% if conversation.listing %}
+    <a href="{% url 'listing_detail' conversation.listing.slug %}" class="bg-white rounded-lg p-3 mb-4 flex items-center gap-3 hover:bg-gray-50">
+      {% with conversation.listing.images.first as img %}{% if img %}<img src="{{ img.image.url }}" class="w-14 h-14 rounded object-cover">{% endif %}{% endwith %}
+      <div><p class="text-sm font-semibold">{{ conversation.listing.title }}</p><p class="text-sm text-gray-600">${{ conversation.listing.price }}</p></div>
+    </a>
+  {% endif %}
+  <div id="messages" class="bg-white rounded-lg p-4 space-y-3" style="min-height:300px;max-height:60vh;overflow-y:auto">
+    {% for m in conversation.messages.all %}
+      <div class="flex {% if m.sender == user %}justify-end{% else %}justify-start{% endif %}">
+        <div class="max-w-[75%] px-3 py-2 rounded-2xl text-sm {% if m.sender == user %}bg-green-600 text-white{% else %}bg-gray-100{% endif %}">
+          {% if m.image %}<a href="{{ m.image.url }}" target="_blank"><img src="{{ m.image.url }}" class="rounded-lg mb-2 max-h-64 object-cover"></a>{% endif %}
+          {% if m.body %}{{ m.body|linebreaksbr }}{% endif %}
+          <div class="text-[10px] opacity-60 mt-1">{{ m.created_at|date:"M j, H:i" }}</div>
+        </div>
+      </div>
+    {% empty %}<p class="text-center text-gray-400 py-8">Say hi 👋</p>{% endfor %}
+  </div>
+  <form method="post" enctype="multipart/form-data" class="mt-4 flex items-center gap-2">
+    {% csrf_token %}
+    <label class="cursor-pointer flex items-center justify-center w-10 h-10 rounded-full border hover:bg-gray-100 text-lg">
+      📷<input type="file" name="image" accept="image/*" class="hidden" onchange="previewSelected(this)">
+    </label>
+    <input name="body" autofocus placeholder="Type a message..." class="flex-1 border rounded-full px-4 py-2">
+    <button class="btn-green rounded-full px-6 py-2 font-semibold">Send</button>
+  </form>
+  <div id="preview" class="mt-2 hidden">
+    <div class="inline-flex items-center gap-2 bg-gray-100 rounded-full pl-3 pr-1 py-1 text-sm">
+      <span id="previewName"></span>
+      <button type="button" onclick="clearPreview()" class="bg-white rounded-full w-6 h-6 flex items-center justify-center text-xs">✕</button>
+    </div>
+  </div>
+</div>
+<script>
+  const box = document.getElementById("messages"); box.scrollTop = box.scrollHeight;
+  function previewSelected(input){
+    const p=document.getElementById("preview"), n=document.getElementById("previewName");
+    if(input.files&&input.files[0]){n.textContent="📎 "+input.files[0].name;p.classList.remove("hidden");}
+    else p.classList.add("hidden");
+  }
+  function clearPreview(){document.querySelector("input[name=image]").value="";document.getElementById("preview").classList.add("hidden");}
+</script>
+{% endblock %}
