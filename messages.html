@@ -1,0 +1,18 @@
+{% extends "core/dashboard/base.html" %}
+{% block title %}Messages{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">All conversations</h1>
+<div class="bg-white rounded-lg shadow-sm divide-y">
+  {% for c in conversations %}
+    <a href="{% url 'dash_conversation' c.id %}" class="flex items-center gap-4 p-4 hover:bg-gray-50">
+      <div class="flex-1 min-w-0">
+        <p class="font-medium">{{ c.buyer.username }} ↔ @{{ c.seller.username }}</p>
+        <p class="text-xs text-gray-500">
+          {% if c.listing %}Re: {{ c.listing.title }}{% else %}(no listing){% endif %}
+          · {{ c.messages.count }} messages · {{ c.last_message_at|date:"M j, H:i" }}
+        </p>
+      </div>
+    </a>
+  {% empty %}<p class="text-center text-gray-400 py-8">No conversations yet.</p>{% endfor %}
+</div>
+{% endblock %}
