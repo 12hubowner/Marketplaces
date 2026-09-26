@@ -1,0 +1,29 @@
+{% extends "core/dashboard/base.html" %}
+{% block title %}New ban{% endblock %}
+{% block content %}
+<a href="{% url 'dash_bans' %}" class="text-sm underline">← All bans</a>
+<h1 class="text-2xl font-bold mt-2 mb-6">Create ban</h1>
+<form method="post" class="max-w-lg bg-white rounded-lg p-6 shadow-sm space-y-4">
+  {% csrf_token %}
+  <div>
+    <label class="block text-sm font-medium mb-1">User (optional)</label>
+    <select name="user_id" class="w-full border rounded px-3 py-2">
+      <option value="">— No user (IP-only ban) —</option>
+      {% for u in users %}<option value="{{ u.id }}">{{ u.username }}{% if u.email %} ({{ u.email }}){% endif %}</option>{% endfor %}
+    </select>
+  </div>
+  <div>
+    <label class="block text-sm font-medium mb-1">IP address (optional)</label>
+    <input name="ip_address" placeholder="e.g. 203.0.113.42" class="w-full border rounded px-3 py-2">
+    <p class="text-xs text-gray-500 mt-1">Leave blank to ban only the user account.</p>
+  </div>
+  <div>
+    <label class="block text-sm font-medium mb-1">Reason</label>
+    <textarea name="reason" rows="3" placeholder="Why is this person being banned?" class="w-full border rounded px-3 py-2"></textarea>
+  </div>
+  <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 p-3 rounded text-sm">
+    ⚠️ This is a <strong>lifetime ban</strong>. The user and IP will be blocked from the entire site until an admin lifts it.
+  </div>
+  <button class="w-full bg-red-600 text-white rounded py-3 font-semibold">Apply lifetime ban</button>
+</form>
+{% endblock %}
