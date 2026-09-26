@@ -1,0 +1,31 @@
+{% extends "core/base.html" %}
+{% block content %}
+<form method="post" enctype="multipart/form-data" class="max-w-lg mx-auto bg-white rounded-lg p-6 space-y-4 shadow-sm">
+  {% csrf_token %}
+  <h1 class="text-2xl font-bold">Edit listing</h1>
+  {% if listing.images.all %}
+    <div><p class="text-sm font-medium mb-2">Current photos</p>
+      <div class="grid grid-cols-3 gap-2">
+        {% for img in listing.images.all %}
+          <div class="relative">
+            <img src="{{ img.image.url }}" class="w-full aspect-square object-cover rounded">
+            <a href="{% url 'delete_listing_image' img.id %}" onclick="return confirm('Remove this photo?')"
+               class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">✕</a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+  <div><label class="block text-sm font-medium mb-1">Add more photos</label>
+    <input type="file" name="images" accept="image/*" multiple class="w-full text-sm"></div>
+  {% for field in form %}
+    <div><label class="block text-sm font-medium mb-1">{{ field.label }}</label>
+      {{ field }}{% if field.errors %}<p class="text-red-600 text-xs mt-1">{{ field.errors|join:", " }}</p>{% endif %}</div>
+  {% endfor %}
+  <div class="flex gap-2">
+    <button type="submit" class="flex-1 btn-green rounded py-3 font-semibold">Save changes</button>
+    <a href="{% url 'listing_detail' listing.slug %}" class="flex-1 text-center border rounded py-3 font-medium">Cancel</a>
+  </div>
+</form>
+<style>input[type=text],input[type=number],input[type=email],input[type=password],textarea,select{width:100%;border:1px solid #ddd;border-radius:6px;padding:.6rem;font:inherit}</style>
+{% endblock %}
