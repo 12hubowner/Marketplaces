@@ -1,0 +1,46 @@
+{% extends "core/dashboard/base.html" %}
+{% block title %}Listings{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Listings</h1>
+<form class="mb-4 flex gap-2">
+  <input name="q" value="{{ q }}" placeholder="Search title or seller..." class="flex-1 border rounded px-3 py-2 text-sm bg-white">
+  <select name="status" class="border rounded px-3 py-2 text-sm bg-white">
+    <option value="">All statuses</option>
+    <option value="active" {% if status == "active" %}selected{% endif %}>Active</option>
+    <option value="sold" {% if status == "sold" %}selected{% endif %}>Sold</option>
+    <option value="archived" {% if status == "archived" %}selected{% endif %}>Archived</option>
+  </select>
+  <button class="bg-black text-white px-4 py-2 rounded text-sm">Filter</button>
+</form>
+<div class="bg-white rounded-lg shadow-sm overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 text-left text-xs text-gray-500">
+      <tr><th class="px-4 py-2">Photo</th><th class="px-4 py-2">Title</th><th class="px-4 py-2">Seller</th><th class="px-4 py-2">Price</th><th class="px-4 py-2">Status</th><th class="px-4 py-2">Actions</th></tr>
+    </thead>
+    <tbody class="divide-y">
+      {% for l in listings %}
+        <tr>
+          <td class="px-4 py-2">
+            {% with l.images.first as img %}
+              {% if img %}<img src="{{ img.image.url }}" class="w-10 h-10 rounded object-cover">
+              {% else %}<div class="w-10 h-10 rounded bg-gray-200"></div>{% endif %}
+            {% endwith %}
+          </td>
+          <td class="px-4 py-3 font-medium"><a href="/listing/{{ l.slug }}/" class="hover:underline">{{ l.title|truncatechars:40 }}</a></td>
+          <td class="px-4 py-3 text-gray-600">@{{ l.seller.username }}</td>
+          <td class="px-4 py-3">${{ l.price }}</td>
+          <td class="px-4 py-3">
+            {% if l.status == "active" %}<span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">active</span>
+            {% elif l.status == "sold" %}<span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">sold</span>
+            {% else %}<span class="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{{ l.status }}</span>{% endif %}
+          </td>
+          <td class="px-4 py-3 space-x-2 whitespace-nowrap">
+            <a href="{% url 'dash_listing_toggle' l.id %}" class="text-blue-600 hover:underline text-xs">{% if l.status == "active" %}Hide{% else %}Show{% endif %}</a>
+            <a href="{% url 'dash_listing_delete' l.id %}" class="text-red-600 hover:underline text-xs">Delete</a>
+          </td>
+        </tr>
+      {% empty %}<tr><td colspan="6" class="text-center text-gray-400 py-8">No listings.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
