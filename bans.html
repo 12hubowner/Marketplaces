@@ -1,0 +1,36 @@
+{% extends "core/dashboard/base.html" %}
+{% block title %}Bans{% endblock %}
+{% block content %}
+<div class="flex justify-between items-center mb-4">
+  <h1 class="text-2xl font-bold">Bans</h1>
+  <a href="{% url 'dash_ban_create' %}" class="bg-red-600 text-white px-4 py-2 rounded text-sm">+ New ban</a>
+</div>
+<div class="flex gap-2 mb-4 text-sm">
+  <a href="?show=active" class="px-3 py-1 rounded border {% if show == 'active' %}bg-black text-white{% else %}bg-white{% endif %}">Active</a>
+  <a href="?show=lifted" class="px-3 py-1 rounded border {% if show == 'lifted' %}bg-black text-white{% else %}bg-white{% endif %}">Lifted</a>
+  <a href="?show=all" class="px-3 py-1 rounded border {% if show == 'all' %}bg-black text-white{% else %}bg-white{% endif %}">All</a>
+</div>
+<div class="bg-white rounded-lg shadow-sm overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 text-left text-xs text-gray-500">
+      <tr><th class="px-4 py-2">User</th><th class="px-4 py-2">IP</th><th class="px-4 py-2">Reason</th><th class="px-4 py-2">By</th><th class="px-4 py-2">Date</th><th class="px-4 py-2">Status</th><th class="px-4 py-2">Actions</th></tr>
+    </thead>
+    <tbody class="divide-y">
+      {% for b in bans %}
+        <tr>
+          <td class="px-4 py-3 font-medium">{% if b.user %}<a href="{% url 'dash_user_detail' b.user.id %}" class="hover:underline">@{{ b.user.username }}</a>{% else %}—{% endif %}</td>
+          <td class="px-4 py-3 text-gray-600">{{ b.ip_address|default:"—" }}</td>
+          <td class="px-4 py-3 text-gray-600 max-w-xs truncate">{{ b.reason|default:"—" }}</td>
+          <td class="px-4 py-3 text-gray-600 text-xs">{{ b.banned_by.username|default:"—" }}</td>
+          <td class="px-4 py-3 text-gray-500 text-xs">{{ b.created_at|date:"M j, Y" }}</td>
+          <td class="px-4 py-3">{% if b.active %}<span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">ACTIVE</span>{% else %}<span class="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">LIFTED</span>{% endif %}</td>
+          <td class="px-4 py-3 whitespace-nowrap">
+            {% if b.active %}<a href="{% url 'dash_ban_lift' b.id %}" class="text-green-600 hover:underline text-xs">Unban</a>
+            {% else %}<a href="{% url 'dash_ban_toggle' b.id %}" class="text-red-600 hover:underline text-xs">Re-ban</a>{% endif %}
+          </td>
+        </tr>
+      {% empty %}<tr><td colspan="7" class="text-center text-gray-400 py-8">No bans.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
