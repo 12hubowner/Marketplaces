@@ -1,0 +1,25 @@
+{% extends "core/base.html" %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Messages</h1>
+{% if conversations %}
+  <div class="bg-white rounded-lg divide-y">
+    {% for c in conversations %}
+      <a href="{% url 'thread' c.id %}" class="flex items-center gap-4 p-4 hover:bg-gray-50">
+        <div class="w-12 h-12 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xl font-bold">
+          {% if user == c.buyer %}{{ c.seller.username|first|upper }}{% else %}{{ c.buyer.username|first|upper }}{% endif %}
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold truncate">{% if user == c.buyer %}@{{ c.seller.username }}{% else %}{{ c.buyer.username }}{% endif %}</p>
+          <p class="text-sm text-gray-500 truncate">
+            {% if c.last %}{% if c.last.sender == user %}You: {% endif %}{% if c.last.image %}📷 Photo{% endif %}{% if c.last.body %}{{ c.last.body|truncatechars:50 }}{% endif %}
+            {% elif c.listing %}{{ c.listing.title }}{% else %}(listing removed){% endif %}
+          </p>
+        </div>
+        {% if c.unread %}<span class="bg-green-600 text-white text-xs rounded-full px-2 py-0.5">{{ c.unread }}</span>{% endif %}
+      </a>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="text-gray-500 text-center py-16">No conversations yet. Find something you like and click "Message seller."</p>
+{% endif %}
+{% endblock %}
