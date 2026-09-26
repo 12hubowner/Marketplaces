@@ -1,0 +1,65 @@
+{% extends "core/base.html" %}
+{% block content %}
+{% if is_browsing %}
+<div class="mb-4">
+  <p class="text-sm text-gray-600">
+    {% if q %}Results for "<strong>{{ q }}</strong>"{% endif %}
+    {% if cat %}in <strong>{{ cat }}</strong>{% endif %}
+    — {{ listings|length }} item{{ listings|length|pluralize }}
+  </p>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+  {% for listing in listings %}{% include "core/_listing_card.html" with listing=listing %}
+  {% empty %}<p class="col-span-full text-center text-gray-500 py-16">No matches.</p>{% endfor %}
+</div>
+{% else %}
+<section class="bg-gradient-to-b from-green-50 to-transparent -mx-4 px-4 pt-10 pb-12 text-center">
+  <h1 class="text-4xl md:text-5xl font-bold tracking-tight">Buy &amp; Sell <span class="text-green-600">Anything</span></h1>
+  <p class="text-gray-600 mt-3 max-w-lg mx-auto">Turn unused stuff into cash in minutes, or find great local deals nearby.</p>
+  <div class="mt-6 flex justify-center gap-3">
+    <a href="/sell/" class="btn-green px-6 py-3 rounded-full font-semibold">Start Selling</a>
+    <a href="/?cat=electronics" class="border border-gray-300 px-6 py-3 rounded-full font-semibold hover:bg-gray-50">Browse Deals</a>
+  </div>
+  <p class="text-xs text-gray-500 mt-3">✓ {{ total_listings }} listings already on the marketplace</p>
+</section>
+<section class="py-8">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-lg font-bold">Shop by Category</h2>
+    <a href="/?cat=" class="text-xs text-green-600 hover:underline">View all →</a>
+  </div>
+  <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-8 gap-3">
+    {% for slug, label, count in categories_with_counts %}
+      <a href="/?cat={{ slug }}" class="bg-white border rounded-lg p-3 flex flex-col items-center gap-1 hover:border-green-500 hover:shadow-sm transition">
+        <span class="w-8 h-8 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold">{{ label|first|upper }}</span>
+        <span class="text-xs text-center font-medium leading-tight">{{ label }}</span>
+        <span class="text-[10px] text-gray-400">{{ count }}</span>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+{% if trending %}
+<section class="py-8">
+  <h2 class="text-lg font-bold mb-4"><span class="text-green-600">▲</span> Trending Now</h2>
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+    {% for listing in trending %}{% include "core/_listing_card.html" with listing=listing show_cart=True %}{% endfor %}
+  </div>
+  <div class="text-center mt-6"><a href="/?cat=" class="inline-block border rounded-full px-6 py-2 text-sm hover:bg-gray-50">View More →</a></div>
+</section>
+{% endif %}
+<section class="py-10 border-t border-gray-200">
+  <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+    <div class="text-center"><div class="w-12 h-12 mx-auto rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xl">✓</div><h3 class="font-semibold mt-3">Verified Sellers</h3><p class="text-xs text-gray-500 mt-1">All sellers are verified so you can trade with confidence.</p></div>
+    <div class="text-center"><div class="w-12 h-12 mx-auto rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xl">🔒</div><h3 class="font-semibold mt-3">Secure Payments</h3><p class="text-xs text-gray-500 mt-1">Buy safely with our protected payment system.</p></div>
+    <div class="text-center"><div class="w-12 h-12 mx-auto rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xl">💬</div><h3 class="font-semibold mt-3">Easy Communication</h3><p class="text-xs text-gray-500 mt-1">Chat directly with buyers and sellers.</p></div>
+  </div>
+</section>
+{% if latest %}
+<section class="py-8">
+  <h2 class="text-lg font-bold mb-4"><span class="text-green-600">◆</span> Latest Listings</h2>
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+    {% for listing in latest %}{% include "core/_listing_card.html" with listing=listing show_badges=True %}{% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endif %}
+{% endblock %}
